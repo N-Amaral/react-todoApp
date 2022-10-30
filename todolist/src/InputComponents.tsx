@@ -20,13 +20,7 @@ const TextInput = () => {
   );
 };
 
-const InputComponents = () => {
-  function readText() {
-    const textArea: NodeListOf<HTMLInputElement> = document.querySelectorAll("#todo-text");
-    Array.from(textArea).forEach((input: HTMLInputElement) => {
-      console.log(input.value);
-    });
-  }
+const InputComponents = (props: { handleSubmit: Function }) => {
   return (
     <>
       <form
@@ -34,7 +28,7 @@ const InputComponents = () => {
         className="flex flex-col"
         onSubmit={(event) => {
           event.preventDefault();
-          readText();
+          props.handleSubmit();
         }}
       >
         <div className="flex flex-row">
