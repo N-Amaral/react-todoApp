@@ -35,8 +35,8 @@ const InputComponents = (props: { handleSubmit: Function }) => {
           <TextInput />
           <DateInput />
         </div>
-        <button id="submitContent" className="h-10 bg-red-700 basis-1/6" type="submit" formMethod="GET">
-          Hello
+        <button id="submitContent" className="h-10 bg-green-700 basis-1/6" type="submit" formMethod="GET">
+          <p className="font-mono font-bold text-2xl text-white"> Submit</p>
         </button>
       </form>
     </>
