@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useEffect, useMemo } from "react";
 
 //Component for btns in each to-do
 const ListItemBtns = (props: { id: number; delete: Function; edit: Function; save: Function }) => {
@@ -58,16 +58,22 @@ const ListItem = (props: { content: { textValue: string; dateValue: string }; id
   const memoValue = useMemo(() => props.content, [props.content]);
   return (
     <li className="todoListItem m-2 p-2 bg-slate-300 rounded drop-shadow-lg outline outline-slate-200 hover:bg-slate-600" id={`${props.id}`}>
-      <textarea className="readTodoText" cols={20} rows={5} disabled defaultValue={memoValue.textValue}></textarea>
-      <input type="date" className="readTodoDate" disabled defaultValue={memoValue.dateValue} />
+      <textarea className="readTodoText" cols={20} rows={5} disabled value={memoValue.textValue}></textarea>
+      <input type="date" className="readTodoDate" disabled value={memoValue.dateValue} />
       <ListItemBtns id={props.id} delete={props.delete} edit={props.edit} save={props.save} />
     </li>
   );
 };
 
 //Component with all to-dos
-const List = (props: { content: Array<object>; handleDelete: Function; handleEdit: Function; handleSave: Function }) => {
+const List = (props: { content: Array<Object>; handleDelete: Function; handleEdit: Function; handleSave: Function }) => {
   const memoList = useMemo(() => props.content, [props.content]);
+
+  useEffect(() => {
+    const list: NodeListOf<HTMLUListElement> = document.querySelectorAll("ul");
+    console.log(list[0].children);
+  });
+
   const content: any[] = [];
   memoList.forEach((item: any, i) => {
     content.push(<ListItem content={item} id={i} key={i} delete={props.handleDelete} edit={props.handleEdit} save={props.handleSave} />);

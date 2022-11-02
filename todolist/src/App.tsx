@@ -22,7 +22,8 @@ const App = () => {
     if (text.length === 0 || date.length === 0) {
       return;
     }
-    setTodoList((prevState: any) => {
+
+    setTodoList((prevState: Array<Object>) => {
       const updatedState = prevState.concat({ textValue: text, dateValue: date });
       updateLocalStorage(updatedState);
       return updatedState;
@@ -30,12 +31,13 @@ const App = () => {
     textArea[0].value = "";
     dateArea[0].value = "";
   }
+
   //deletes selected to-do
   function deleteTodo(id: number) {
-    setTodoList((prevState: any) => {
+    setTodoList((prevState: Array<Object>) => {
       // eslint-disable-next-line array-callback-return
       const updatedState = prevState.filter((item: object, i: number) => {
-        if (i !== id) {
+        if (id !== i) {
           return item;
         }
       });
