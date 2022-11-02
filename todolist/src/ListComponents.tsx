@@ -55,10 +55,11 @@ const ListItemBtns = (props: { id: number; delete: Function; edit: Function; sav
 
 //Component for each to-do
 const ListItem = (props: { content: { textValue: string; dateValue: string }; id: number; delete: Function; edit: Function; save: Function }) => {
+  const memoValue = useMemo(() => props.content, [props.content]);
   return (
     <li className="todoListItem m-2 p-2 bg-slate-300 rounded drop-shadow-lg outline outline-slate-200 hover:bg-slate-600" id={`${props.id}`}>
-      <textarea className="readTodoText" cols={20} rows={5} disabled value={props.content.textValue}></textarea>
-      <input type="date" className="readTodoDate" disabled value={props.content.dateValue} />
+      <textarea className="readTodoText" cols={20} rows={5} disabled defaultValue={memoValue.textValue}></textarea>
+      <input type="date" className="readTodoDate" disabled defaultValue={memoValue.dateValue} />
       <ListItemBtns id={props.id} delete={props.delete} edit={props.edit} save={props.save} />
     </li>
   );

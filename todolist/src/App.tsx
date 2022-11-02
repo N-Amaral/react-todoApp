@@ -1,16 +1,17 @@
 import React, { useState } from "react";
 import ListComponents from "./ListComponents";
 import InputComponents from "./InputComponents";
+import { state } from "./helper";
 
 const App = () => {
   //startup list of to-do's
-  const [todoList, setTodoList] = useState([
-    { textValue: "First todo", dateValue: "2022-04-12" },
-    { textValue: "Second todo", dateValue: "2022-05-12" },
-    { textValue: "Third todo", dateValue: "2022-06-12" },
-    { textValue: "Fourth todo", dateValue: "2022-07-12" },
-  ]);
+  const storage: string | null = localStorage.getItem("todoList");
 
+  const [todoList, setTodoList] = useState(storage === null ? state : JSON.parse(storage));
+
+  function updateLocalStorage(todoList: Array<Object>) {
+    localStorage.setItem("todoList", JSON.stringify(todoList));
+  }
   //allow submission of new to-do
   function newTodo() {
     const textArea: NodeListOf<HTMLInputElement> = document.querySelectorAll("#todo-text");
@@ -21,8 +22,9 @@ const App = () => {
     if (text.length === 0 || date.length === 0) {
       return;
     }
-    setTodoList((prevState) => {
+    setTodoList((prevState: any) => {
       const updatedState = prevState.concat({ textValue: text, dateValue: date });
+      updateLocalStorage(updatedState);
       return updatedState;
     });
     textArea[0].value = "";
@@ -30,15 +32,22 @@ const App = () => {
   }
   //deletes selected to-do
   function deleteTodo(id: number) {
-    setTodoList((prevState) => {
-      const updatedState = prevState.filter((item, i) => {
+    setTodoList((prevState: any) => {
+      // eslint-disable-next-line array-callback-return
+      const updatedState = prevState.filter((item: object, i: number) => {
         if (i !== id) {
           return item;
         }
       });
+      updateLocalStorage(updatedState);
       return updatedState;
     });
   }
+
+  function logChange(event: any) {
+    console.log(event.key);
+  }
+
   //allows for editing of selected to-do
   function editTodo(id: number) {
     const todos: NodeListOf<HTMLInputElement> = document.querySelectorAll(".todoListItem");
@@ -49,10 +58,10 @@ const App = () => {
     btns[1].classList.add("hidden");
     btns[2].classList.remove("hidden");
     textArea.removeAttribute("disabled");
-
-    console.log(textArea.innerHTML);
-    console.log(btns);
+    dateArea.removeAttribute("disabled");
+    textArea.addEventListener("keydown", (event) => logChange(event));
   }
+
   //saves the previously selected for editing to-do
   function saveEditedTodo(id: number) {
     const todos: NodeListOf<HTMLInputElement> = document.querySelectorAll(".todoListItem");
@@ -63,6 +72,7 @@ const App = () => {
     btns[2].classList.add("hidden");
     btns[1].classList.remove("hidden");
     textArea.setAttribute("disabled", "");
+    textArea.removeEventListener("keydown", (event) => logChange(event));
   }
 
   return (
