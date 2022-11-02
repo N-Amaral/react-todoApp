@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import React, { useEffect, useState } from "react";
 import ListComponents from "./ListComponents";
 import InputComponents from "./InputComponents";
 import { state } from "./helper";
@@ -46,10 +47,6 @@ const App = () => {
     });
   }
 
-  function logChange(event: any) {
-    console.log(event.key);
-  }
-
   //allows for editing of selected to-do
   function editTodo(id: number) {
     const todos: NodeListOf<HTMLInputElement> = document.querySelectorAll(".todoListItem");
@@ -61,7 +58,9 @@ const App = () => {
     btns[2].classList.remove("hidden");
     textArea.removeAttribute("disabled");
     dateArea.removeAttribute("disabled");
-    textArea.addEventListener("keydown", (event) => logChange(event));
+
+    textArea.innerHTML = `${todoList[id].textValue}`;
+    dateArea.innerHTML = `${todoList[id].dateValue}`;
   }
 
   //saves the previously selected for editing to-do
@@ -74,7 +73,7 @@ const App = () => {
     btns[2].classList.add("hidden");
     btns[1].classList.remove("hidden");
     textArea.setAttribute("disabled", "");
-    textArea.removeEventListener("keydown", (event) => logChange(event));
+    dateArea.setAttribute("disabled", "");
   }
 
   return (
