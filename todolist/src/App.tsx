@@ -1,5 +1,5 @@
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import ListComponents from "./ListComponents";
 import InputComponents from "./InputComponents";
 import { state } from "./helper";
@@ -7,7 +7,7 @@ import { state } from "./helper";
 const App = () => {
   //startup list of to-do's
   const storage: string | null = localStorage.getItem("todoList");
-
+  const editedText: { current: string } = useRef("text");
   const [todoList, setTodoList] = useState(storage === null ? state : JSON.parse(storage));
 
   function updateLocalStorage(todoList: Array<Object>) {
@@ -15,6 +15,9 @@ const App = () => {
   }
   //allow submission of new to-do
   function newTodo() {
+    const currentDate = new Date();
+    let currDate = `${currentDate.getFullYear()}-${currentDate.getMonth() + 1}-${currentDate.getDate()}`;
+
     const textArea: NodeListOf<HTMLInputElement> = document.querySelectorAll("#todo-text");
     const dateArea: NodeListOf<HTMLInputElement> = document.querySelectorAll("#todo-date");
     const text: string = textArea[0].value;
@@ -25,7 +28,7 @@ const App = () => {
     }
 
     setTodoList((prevState: Array<Object>) => {
-      const updatedState = prevState.concat({ textValue: text, dateValue: date });
+      const updatedState = prevState.concat({ textValue: text, dateValue: date, createdOn: currDate });
       updateLocalStorage(updatedState);
       return updatedState;
     });
@@ -50,9 +53,9 @@ const App = () => {
   //allows for editing of selected to-do
   function editTodo(id: number) {
     const todos: NodeListOf<HTMLInputElement> = document.querySelectorAll(".todoListItem");
-    const textArea = todos[id].children[0];
-    const dateArea = todos[id].children[1];
-    const btns = todos[id].children[2].children;
+    const textArea = todos[id].children[1];
+    const dateArea = todos[id].children[2];
+    const btns = todos[id].children[3].children;
 
     btns[1].classList.add("hidden");
     btns[2].classList.remove("hidden");
@@ -66,9 +69,9 @@ const App = () => {
   //saves the previously selected for editing to-do
   function saveEditedTodo(id: number) {
     const todos: NodeListOf<HTMLInputElement> = document.querySelectorAll(".todoListItem");
-    const textArea = todos[id].children[0];
-    const dateArea = todos[id].children[1];
-    const btns = todos[id].children[2].children;
+    const textArea: Element = todos[id].children[1];
+    const dateArea = todos[id].children[2];
+    const btns = todos[id].children[3].children;
 
     btns[2].classList.add("hidden");
     btns[1].classList.remove("hidden");

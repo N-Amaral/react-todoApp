@@ -15,7 +15,7 @@ const ListItemBtns = (props: { id: number; delete: Function; edit: Function; sav
             props.delete(props.id);
           }}
         >
-          <button className="rounded-full bg-slate-100 outline outline-white w-20" type="submit">
+          <button className="mt-2 mb-2 mr-1 ml-1 rounded-full bg-slate-100 outline outline-white w-20" type="submit">
             Delete
           </button>
         </form>
@@ -30,7 +30,7 @@ const ListItemBtns = (props: { id: number; delete: Function; edit: Function; sav
             props.edit(props.id);
           }}
         >
-          <button className="rounded-full bg-slate-100 outline outline-white w-20" type="submit">
+          <button className="mt-2 mb-2 mr-1 ml-1 rounded-full bg-slate-100 outline outline-white w-20" type="submit">
             Edit
           </button>
         </form>
@@ -45,7 +45,7 @@ const ListItemBtns = (props: { id: number; delete: Function; edit: Function; sav
             props.save(props.id);
           }}
         >
-          <button className="rounded-full bg-slate-100 outline outline-white w-20 " type="submit">
+          <button className="rounded-full mt-2 mb-2 mr-1 ml-1 bg-slate-100 outline outline-white w-20" type="submit">
             Save
           </button>
         </form>
@@ -55,14 +55,21 @@ const ListItemBtns = (props: { id: number; delete: Function; edit: Function; sav
 };
 
 //Component for each to-do
-const ListItem = (props: { content: { textValue: string; dateValue: string }; id: number; delete: Function; edit: Function; save: Function }) => {
+const ListItem = (props: {
+  content: { textValue: string; dateValue: string; createdOn: string };
+  id: number;
+  delete: Function;
+  edit: Function;
+  save: Function;
+}) => {
   const memoValue = useMemo(() => props.content, [props.content]);
   return (
-    <li className="todoListItem m-2 p-2 bg-slate-300 rounded drop-shadow-lg outline outline-slate-200 hover:bg-slate-600" id={`${props.id}`}>
-      <textarea className="readTodoText" cols={20} rows={5} disabled placeholder={memoValue.textValue}></textarea>
+    <li className="todoListItem m-2 p-2 bg-slate-300 rounded drop-shadow-lg outline outline-slate-200 hover:bg-slate-600 grid " id={`${props.id}`}>
+      <span className="font-mono font-bold text-xl pr-1 pl-1 mr-1 ml-1">Created on : {props.content.createdOn}</span>
+      <textarea className="readTodoText font-mono " cols={20} rows={5} disabled placeholder={memoValue.textValue}></textarea>
       <input
         type="text"
-        className="readTodoDate w-1/2"
+        className="readTodoDate w-3/5 font-mono "
         disabled
         placeholder={memoValue.dateValue}
         onFocus={(e) => {
@@ -85,7 +92,7 @@ const List = (props: { content: Array<Object>; handleDelete: Function; handleEdi
   memoList.forEach((item: any, i) => {
     content.push(<ListItem content={item} id={i} key={i} delete={props.handleDelete} edit={props.handleEdit} save={props.handleSave} />);
   });
-  return <ul className="m-3 p-2 bg-yellow-400 flex flex-wrap flex-auto flex-row overflow-y-auto h-auto w-auto justify-center">{content}</ul>;
+  return <ul className="m-3 p-2 bg-yellow-400 flex flex-wrap flex-auto flex-row overflow-y-auto h-auto w-auto justify-start">{content}</ul>;
 };
 
 export default List;

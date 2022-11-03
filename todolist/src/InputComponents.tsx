@@ -4,7 +4,7 @@ const DateInput = () => {
   return (
     <>
       <div className="date-wrapper basis-1/4 m-1">
-        <input className="form-input" type="date" name="todo-date" id="todo-date" />
+        <input className="form-input font-mono" type="date" name="todo-date" id="todo-date" />
       </div>
     </>
   );
