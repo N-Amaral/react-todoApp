@@ -13,7 +13,7 @@ const DateInput = () => {
 const TextInput = () => {
   return (
     <>
-      <div className="text-wrapper basis-1/2 m-1">
+      <div className="text-wrapper basis-1/2 m-1 ">
         <textarea className="form-textarea" name="text" id="todo-text" cols={50} rows={4}></textarea>
       </div>
     </>
@@ -25,17 +25,17 @@ const InputComponents = (props: { handleSubmit: Function }) => {
     <>
       <form
         action=""
-        className="flex flex-col"
+        className="flex flex-col "
         onSubmit={(event) => {
           event.preventDefault();
           props.handleSubmit();
         }}
       >
-        <div className="flex flex-row">
+        <div className="flex flex-row bg-gradient-to-br from-white via-purple-400 to-blue-600 rounded-t-md p-1">
           <TextInput />
           <DateInput />
         </div>
-        <button id="submitContent" className="h-10 bg-green-700 basis-1/6" type="submit" formMethod="GET">
+        <button id="submitContent" className="h-10 bg-blue-700 basis-1/6 rounded-b-md" type="submit" formMethod="GET">
           <p className="font-mono font-bold text-2xl text-white"> Submit</p>
         </button>
       </form>

@@ -69,7 +69,7 @@ const App = () => {
   //saves the previously selected for editing to-do
   function saveEditedTodo(id: number) {
     const todos: NodeListOf<HTMLInputElement> = document.querySelectorAll(".todoListItem");
-    const textArea: Element = todos[id].children[1];
+    const textArea: any = todos[id].children[1];
     const dateArea = todos[id].children[2];
     const btns = todos[id].children[3].children;
 
@@ -80,12 +80,14 @@ const App = () => {
   }
 
   return (
-    <div className="App bg-slate-400 p-3">
-      <div className="input-wrapper m-5 p-2 bg-yellow-100 rounded-xl">
-        <InputComponents handleSubmit={newTodo} />
-      </div>
-      <div className="list-wrapper m-2 p-3 bg-yellow-500 rounded-xl ">
-        <ListComponents content={todoList} handleDelete={deleteTodo} handleEdit={editTodo} handleSave={saveEditedTodo} />
+    <div className="min-w-screen max-w-full min-h-screen max-h-full bg-gradient-to-b from-indigo-500 via-purple-500 to-blue-500 ">
+      <div className="App w-content h-content p-1 flex">
+        <div className="input-wrapper m-5 p-2 bg-indigo-100 rounded-xl  w-min h-min ">
+          <InputComponents handleSubmit={newTodo} />
+        </div>
+        <div className="list-wrapper m-2 p-3 rounded-xl ">
+          <ListComponents content={todoList} handleDelete={deleteTodo} handleEdit={editTodo} handleSave={saveEditedTodo} />
+        </div>
       </div>
     </div>
   );
