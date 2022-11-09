@@ -27,7 +27,7 @@ const App = () => {
     }
 
     setTodoList((prevState: Array<Object>) => {
-      const updatedState = prevState.concat({ textValue: text, dateValue: date, createdOn: currDate });
+      const updatedState = prevState.concat({ textValue: text, dateValue: date, createdOn: currDate, completed: false });
       updateLocalStorage(updatedState);
       return updatedState;
     });
@@ -53,11 +53,12 @@ const App = () => {
   function editTodo(id: number) {
     const todos = document.querySelectorAll(".todoListItem");
     const textArea = todos[id].querySelectorAll(".editForm");
-
+    const textDisplay: NodeListOf<HTMLSpanElement> = todos[id].querySelectorAll(".textDisplay");
     const btns: NodeListOf<HTMLButtonElement> = todos[id].querySelectorAll("button");
 
     btns[1].parentElement!.classList.add("hidden");
     btns[2].parentElement!.classList.remove("hidden");
+    textDisplay[0].classList.add("hidden");
     textArea[0].classList.remove("hidden");
     textArea[0].removeAttribute("disabled");
   }
@@ -66,11 +67,12 @@ const App = () => {
   function saveEditedTodo(id: number) {
     const todos: NodeListOf<HTMLInputElement> = document.querySelectorAll(".todoListItem");
     const textArea: any = todos[id].querySelectorAll(".editForm");
+    const textDisplay: NodeListOf<HTMLSpanElement> = todos[id].querySelectorAll(".textDisplay");
     const btns: NodeListOf<HTMLButtonElement> = todos[id].querySelectorAll("button");
 
     btns[2].parentElement!.classList.add("hidden");
     btns[1].parentElement!.classList.remove("hidden");
-
+    textDisplay[0].classList.remove("hidden");
     textArea[0].classList.add("hidden");
     textArea[0].setAttribute("disabled", "");
 
@@ -88,12 +90,24 @@ const App = () => {
     });
   }
 
+  function toggleTodo(id: number) {
+    setTodoList((prevState: Array<Object>) => {
+      const updatedState = prevState.map((item: { completed?: boolean }, i: number) => {
+        if (i === id) {
+          return { ...item, completed: !item.completed };
+        }
+        return item;
+      });
+      updateLocalStorage(updatedState);
+      return updatedState;
+    });
+  }
   return (
     <div className="min-w-screen max-w-full min-h-screen max-h-full bg-gradient-to-b from-indigo-500 via-purple-500 to-blue-500 ">
       <div className="App w-content h-content p-1 flex justify-center">
         <div className="input-wrapper m-5 p-2  rounded-xl  w-min h-min drop-shadow-lg">
           <InputComponents handleSubmit={newTodo} />
-          <ListComponents content={todoList} handleDelete={deleteTodo} handleEdit={editTodo} handleSave={saveEditedTodo} />
+          <ListComponents content={todoList} handleDelete={deleteTodo} handleEdit={editTodo} handleSave={saveEditedTodo} handleToggle={toggleTodo} />
         </div>
       </div>
     </div>

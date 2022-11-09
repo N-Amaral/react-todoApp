@@ -2,11 +2,11 @@
 import React, { useEffect, useMemo } from "react";
 
 //Component for btns in each to-do
-const ListItemBtns = () => {
+const ListItemBtns = (props: { status: boolean }) => {
   return (
     <div className="flex flex-row">
       <span className="mr-1 ml-1 h-2/3 w-min">
-        <button className="mt-2 mb-2 p-1 bg-white rounded hover:bg-blue-800  h-min w-min" type="submit" value={"delete"}>
+        <button className="mt-2 mb-2 p-1 bg-red-600 rounded hover:bg-blue-800  h-min w-min" type="submit" value={"delete"}>
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-5 h-5">
             <path
               fillRule="evenodd"
@@ -35,25 +35,52 @@ const ListItemBtns = () => {
           </svg>
         </button>
       </span>
+      <span className="mr-1 ml-1">
+        <button
+          className={`mt-2 mb-2 p-1 rounded hover:bg-blue-800  h-min w-min ${props.status ? "bg-green-500" : "bg-yellow-300 "}`}
+          value={"toggle"}
+          type="submit"
+        >
+          {props.status ? (
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-5 h-5">
+              <path
+                fillRule="evenodd"
+                d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z"
+                clipRule="evenodd"
+              />
+            </svg>
+          ) : (
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-5 h-5">
+              <path
+                fillRule="evenodd"
+                d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-5a.75.75 0 01.75.75v4.5a.75.75 0 01-1.5 0v-4.5A.75.75 0 0110 5zm0 10a1 1 0 100-2 1 1 0 000 2z"
+                clipRule="evenodd"
+              />
+            </svg>
+          )}
+        </button>
+      </span>
     </div>
   );
 };
 
 //Component for each to-do
 const ListItem = (props: {
-  content: { textValue: string; dateValue: string; createdOn: string };
+  content: { textValue: string; dateValue: string; createdOn: string; completed: boolean };
   id: number;
   delete: Function;
   edit: Function;
   save: Function;
+  toggle: Function;
 }) => {
   return (
     <li
-      className="todoListItem m-2 p-2 bg-slate-300 rounded drop-shadow-lg  bg-gradient-to-br from-white via-purple-400 to-blue-600 grid w-1/2 h-2/3"
+      className="todoListItem m-2 p-2 bg-slate-300 rounded drop-shadow-lg  bg-gradient-to-br from-white via-purple-400 to-blue-600 grid w-1/2 h-2/3 "
       id={`${props.id}`}
     >
       <span className="font-mono font-bold text-xl pr-1 pl-1 mr-1 ml-1">Created on : {props.content.createdOn}</span>
       <form
+        className="overflow-x-auto ..."
         action=""
         method="GET"
         onSubmit={(event: any) => {
@@ -70,31 +97,34 @@ const ListItem = (props: {
             case "save":
               props.save(props.id);
               break;
+            case "toggle":
+              props.toggle(props.id);
+              break;
           }
         }}
       >
-        <div>
-          <div className="bg-white font-mono text-xl rounded">
-            <span>{props.content.textValue}</span>
-            <input type="text" defaultValue={props.content.textValue} disabled className="hidden editForm" />
-          </div>
-          <div className="bg-white font-mono  text-xl rounded">
-            <span>{props.content.dateValue}</span>
-          </div>
+        <div className="bg-white rounded  min-w-max min-h-max">
+          <span className="textDisplay font-mono text-xl ">{props.content.textValue}</span>
+          <input type="text" defaultValue={props.content.textValue} disabled className="hidden editForm border rounded w-full h-min font-mono text-xl" />
         </div>
-        <ListItemBtns />
+        <div className="bg-white rounded min-w-max max-w-max">
+          <span className="font-mono text-xl">{props.content.dateValue}</span>
+        </div>
+        <ListItemBtns status={props.content.completed} />
       </form>
     </li>
   );
 };
 
 //Component with all to-dos
-const List = (props: { content: Array<Object>; handleDelete: Function; handleEdit: Function; handleSave: Function }) => {
+const List = (props: { content: Array<Object>; handleDelete: Function; handleEdit: Function; handleSave: Function; handleToggle: Function }) => {
   const memoList = useMemo(() => props.content, [props.content]);
 
   const content: any[] = [];
   memoList.forEach((item: any, i) => {
-    content.push(<ListItem content={item} id={i} key={i} delete={props.handleDelete} edit={props.handleEdit} save={props.handleSave} />);
+    content.push(
+      <ListItem content={item} id={i} key={i} delete={props.handleDelete} edit={props.handleEdit} save={props.handleSave} toggle={props.handleToggle} />
+    );
   });
   return <ul className="m-3 p-2 flex flex-wrap flex-auto flex-row overflow-y-auto h-auto w-auto justify-center">{content}</ul>;
 };
