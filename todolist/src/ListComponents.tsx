@@ -5,7 +5,7 @@ import React, { useEffect, useMemo } from "react";
 const ListItemBtns = (props: { status: boolean }) => {
   return (
     <div className="flex flex-row">
-      <span className="mr-1 ml-1 h-2/3 w-min">
+      <span className="mr-1 ml-1">
         <button className="mt-2 mb-2 p-1 bg-red-600 rounded hover:bg-blue-800  h-min w-min" type="submit" value={"delete"}>
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-5 h-5">
             <path
@@ -17,7 +17,7 @@ const ListItemBtns = (props: { status: boolean }) => {
         </button>
       </span>
       <span className="mr-1 ml-1">
-        <button className="mt-2 mb-2 p-1 bg-white rounded hover:bg-blue-800   h-min w-min" value={"edit"} type="submit">
+        <button className={`mt-2 mb-2 p-1 bg-yellow-500 rounded hover:bg-blue-800 ${props.status ? "hidden" : ""} h-min w-min`} value={"edit"} type="submit">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-5 h-5">
             <path d="M5.433 13.917l1.262-3.155A4 4 0 017.58 9.42l6.92-6.918a2.121 2.121 0 013 3l-6.92 6.918c-.383.383-.84.685-1.343.886l-3.154 1.262a.5.5 0 01-.65-.65z" />
             <path d="M3.5 5.75c0-.69.56-1.25 1.25-1.25H10A.75.75 0 0010 3H4.75A2.75 2.75 0 002 5.75v9.5A2.75 2.75 0 004.75 18h9.5A2.75 2.75 0 0017 15.25V10a.75.75 0 00-1.5 0v5.25c0 .69-.56 1.25-1.25 1.25h-9.5c-.69 0-1.25-.56-1.25-1.25v-9.5z" />
@@ -25,7 +25,7 @@ const ListItemBtns = (props: { status: boolean }) => {
         </button>
       </span>
       <span className="mr-1 ml-1 hidden">
-        <button className="mt-2 mb-2 p-1 bg-white rounded hover:bg-blue-800  h-min w-min" value={"save"} type="submit">
+        <button className="mt-2 mb-2 p-1 bg-green-500 rounded hover:bg-blue-800  h-min w-min" value={"save"} type="submit">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-5 h-5">
             <path
               fillRule="evenodd"
@@ -37,7 +37,7 @@ const ListItemBtns = (props: { status: boolean }) => {
       </span>
       <span className="mr-1 ml-1">
         <button
-          className={`mt-2 mb-2 p-1 rounded hover:bg-blue-800  h-min w-min ${props.status ? "bg-green-500" : "bg-yellow-300 "}`}
+          className={`mt-2 mb-2 p-1 rounded hover:bg-blue-800  h-min w-min ${props.status ? "bg-green-500" : "bg-blue-300 "}`}
           value={"toggle"}
           type="submit"
         >
@@ -66,8 +66,7 @@ const ListItemBtns = (props: { status: boolean }) => {
 
 //Component for each to-do
 const ListItem = (props: {
-  content: { textValue: string; dateValue: string; createdOn: string; completed: boolean };
-  id: number;
+  content: { id: number; textValue: string; dateValue: string; createdOn: string; completed: boolean };
   delete: Function;
   edit: Function;
   save: Function;
@@ -75,8 +74,10 @@ const ListItem = (props: {
 }) => {
   return (
     <li
-      className="todoListItem m-2 p-2 bg-slate-300 rounded drop-shadow-lg  bg-gradient-to-br from-white via-purple-400 to-blue-600 grid w-1/2 h-2/3 "
-      id={`${props.id}`}
+      className={`todoListItem m-2 p-2 bg-slate-300 rounded drop-shadow-lg ${
+        props.content.completed ? "bg-gradient-to-br from-white via-slate-300 to-slate-600" : "bg-gradient-to-br from-white via-purple-400 to-blue-600"
+      } grid w-1/2 h-2/3`}
+      id={`${props.content.id}`}
     >
       <span className="font-mono font-bold text-xl pr-1 pl-1 mr-1 ml-1">Created on : {props.content.createdOn}</span>
       <form
@@ -89,16 +90,16 @@ const ListItem = (props: {
           event.stopPropagation();
           switch (submitter) {
             case "delete":
-              props.delete(props.id);
+              props.delete(props.content.id);
               break;
             case "edit":
-              props.edit(props.id);
+              props.edit(props.content.id);
               break;
             case "save":
-              props.save(props.id);
+              props.save(props.content.id);
               break;
             case "toggle":
-              props.toggle(props.id);
+              props.toggle(props.content.id);
               break;
           }
         }}
@@ -108,7 +109,8 @@ const ListItem = (props: {
           <input type="text" defaultValue={props.content.textValue} disabled className="hidden editForm border rounded w-full h-min font-mono text-xl" />
         </div>
         <div className="bg-white rounded min-w-max max-w-max">
-          <span className="font-mono text-xl">{props.content.dateValue}</span>
+          <span className="dateDisplay font-mono text-xl">Todo by: {props.content.dateValue}</span>
+          <input type="date" defaultValue={props.content.dateValue} disabled className="hidden editDate border rounded w-full h-min font-mono text-xl" />
         </div>
         <ListItemBtns status={props.content.completed} />
       </form>
@@ -122,9 +124,7 @@ const List = (props: { content: Array<Object>; handleDelete: Function; handleEdi
 
   const content: any[] = [];
   memoList.forEach((item: any, i) => {
-    content.push(
-      <ListItem content={item} id={i} key={i} delete={props.handleDelete} edit={props.handleEdit} save={props.handleSave} toggle={props.handleToggle} />
-    );
+    content.push(<ListItem content={item} key={i} delete={props.handleDelete} edit={props.handleEdit} save={props.handleSave} toggle={props.handleToggle} />);
   });
   return <ul className="m-3 p-2 flex flex-wrap flex-auto flex-row overflow-y-auto h-auto w-auto justify-center">{content}</ul>;
 };

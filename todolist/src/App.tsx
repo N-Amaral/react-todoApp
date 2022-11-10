@@ -12,13 +12,27 @@ const App = () => {
   function updateLocalStorage(todoList: Array<Object>) {
     localStorage.setItem("todoList", JSON.stringify(todoList));
   }
+
+  //randomized id function - checks if already exists
+  function newId(todoList: Array<Object>) {
+    const id = Math.floor(Math.random() * 100) + Math.floor(Math.random() * 10);
+
+    todoList.forEach((item: { id?: number }) => {
+      if (id === item.id) {
+        return;
+      }
+    });
+    return id;
+  }
   //allow submission of new to-do
   function newTodo() {
     const currentDate = new Date();
-    let currDate = `${currentDate.getFullYear()}-${currentDate.getMonth() + 1}-${currentDate.getDate()}`;
+    const id = newId(todoList);
+    const currDate = `${currentDate.getFullYear()}-${currentDate.getMonth() + 1}-${currentDate.getDate()}`;
 
     const textArea: NodeListOf<HTMLInputElement> = document.querySelectorAll("#todo-text");
     const dateArea: NodeListOf<HTMLInputElement> = document.querySelectorAll("#todo-date");
+
     const text: string = textArea[0].value;
     const date: string = dateArea[0].value;
 
@@ -27,7 +41,7 @@ const App = () => {
     }
 
     setTodoList((prevState: Array<Object>) => {
-      const updatedState = prevState.concat({ textValue: text, dateValue: date, createdOn: currDate, completed: false });
+      const updatedState = prevState.concat({ id: id, textValue: text, dateValue: date, createdOn: currDate, completed: false });
       updateLocalStorage(updatedState);
       return updatedState;
     });
@@ -39,8 +53,8 @@ const App = () => {
   function deleteTodo(id: number) {
     setTodoList((prevState: Array<Object>) => {
       // eslint-disable-next-line array-callback-return
-      const updatedState = prevState.filter((item: object, i: number) => {
-        if (id !== i) {
+      const updatedState = prevState.filter((item: { id?: number }, i: number) => {
+        if (id !== item.id) {
           return item;
         }
       });
@@ -53,35 +67,55 @@ const App = () => {
   function editTodo(id: number) {
     const todos = document.querySelectorAll(".todoListItem");
     const textArea = todos[id].querySelectorAll(".editForm");
+    const dateArea = todos[id].querySelectorAll(".editDate");
     const textDisplay: NodeListOf<HTMLSpanElement> = todos[id].querySelectorAll(".textDisplay");
+    const dateDisplay: NodeListOf<HTMLSpanElement> = todos[id].querySelectorAll(".dateDisplay");
     const btns: NodeListOf<HTMLButtonElement> = todos[id].querySelectorAll("button");
 
+    //button switch
     btns[1].parentElement!.classList.add("hidden");
     btns[2].parentElement!.classList.remove("hidden");
+
+    //displays are hidden
     textDisplay[0].classList.add("hidden");
+    dateDisplay[0].classList.add("hidden");
+
+    //editing inputs are enabled and shown
     textArea[0].classList.remove("hidden");
+    dateArea[0].classList.remove("hidden");
     textArea[0].removeAttribute("disabled");
+    dateArea[0].removeAttribute("disabled");
   }
 
   //saves the previously selected for editing to-do
   function saveEditedTodo(id: number) {
     const todos: NodeListOf<HTMLInputElement> = document.querySelectorAll(".todoListItem");
     const textArea: any = todos[id].querySelectorAll(".editForm");
+    const dateArea: any = todos[id].querySelectorAll(".editDate");
     const textDisplay: NodeListOf<HTMLSpanElement> = todos[id].querySelectorAll(".textDisplay");
+    const dateDisplay: NodeListOf<HTMLSpanElement> = todos[id].querySelectorAll(".dateDisplay");
     const btns: NodeListOf<HTMLButtonElement> = todos[id].querySelectorAll("button");
 
+    //button switch reset
     btns[2].parentElement!.classList.add("hidden");
     btns[1].parentElement!.classList.remove("hidden");
+
+    //display's are reset with new data
     textDisplay[0].classList.remove("hidden");
+    dateDisplay[0].classList.remove("hidden");
+
+    //editing inputs are disabled and hidden
     textArea[0].classList.add("hidden");
     textArea[0].setAttribute("disabled", "");
+    dateArea[0].classList.add("hidden");
+    dateArea[0].setAttribute("disabled", "");
 
-    const newContent = textArea[0].value;
+    const newContent = [textArea[0].value, dateArea[0].value];
     setTodoList((prevState: Array<Object>) => {
       // eslint-disable-next-line array-callback-return
-      const updatedState = prevState.map((item: object, i: number) => {
-        if (id === i) {
-          return { ...item, textValue: newContent };
+      const updatedState = prevState.map((item: { id?: number }, i: number) => {
+        if (id === item.id) {
+          return { ...item, textValue: newContent[0], dateValue: newContent[1] };
         }
         return item;
       });
@@ -102,6 +136,7 @@ const App = () => {
       return updatedState;
     });
   }
+
   return (
     <div className="min-w-screen max-w-full min-h-screen max-h-full bg-gradient-to-b from-indigo-500 via-purple-500 to-blue-500 ">
       <div className="App w-content h-content p-1 flex justify-center">
