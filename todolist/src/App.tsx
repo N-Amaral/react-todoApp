@@ -53,7 +53,7 @@ const App = () => {
   function deleteTodo(id: number) {
     setTodoList((prevState: Array<Object>) => {
       // eslint-disable-next-line array-callback-return
-      const updatedState = prevState.filter((item: { id?: number }, i: number) => {
+      const updatedState = prevState.filter((item: { id?: number }) => {
         if (id !== item.id) {
           return item;
         }
@@ -66,11 +66,18 @@ const App = () => {
   //allows for editing of selected to-do
   function editTodo(id: number) {
     const todos = document.querySelectorAll(".todoListItem");
-    const textArea = todos[id].querySelectorAll(".editForm");
-    const dateArea = todos[id].querySelectorAll(".editDate");
-    const textDisplay: NodeListOf<HTMLSpanElement> = todos[id].querySelectorAll(".textDisplay");
-    const dateDisplay: NodeListOf<HTMLSpanElement> = todos[id].querySelectorAll(".dateDisplay");
-    const btns: NodeListOf<HTMLButtonElement> = todos[id].querySelectorAll("button");
+    // eslint-disable-next-line array-callback-return
+    const idTodo: Array<Element> = Array.from(todos).filter((todo) => {
+      if (parseInt(todo.getAttribute("id")!.valueOf()) === id) {
+        return todo;
+      }
+    });
+
+    const textArea: NodeListOf<HTMLInputElement> = idTodo[0].querySelectorAll(".editForm");
+    const dateArea: NodeListOf<HTMLInputElement> = idTodo[0].querySelectorAll(".editDate");
+    const textDisplay: NodeListOf<HTMLSpanElement> = idTodo[0].querySelectorAll(".textDisplay");
+    const dateDisplay: NodeListOf<HTMLSpanElement> = idTodo[0].querySelectorAll(".dateDisplay");
+    const btns: NodeListOf<HTMLButtonElement> = idTodo[0].querySelectorAll("button");
 
     //button switch
     btns[1].parentElement!.classList.add("hidden");
@@ -90,11 +97,17 @@ const App = () => {
   //saves the previously selected for editing to-do
   function saveEditedTodo(id: number) {
     const todos: NodeListOf<HTMLInputElement> = document.querySelectorAll(".todoListItem");
-    const textArea: any = todos[id].querySelectorAll(".editForm");
-    const dateArea: any = todos[id].querySelectorAll(".editDate");
-    const textDisplay: NodeListOf<HTMLSpanElement> = todos[id].querySelectorAll(".textDisplay");
-    const dateDisplay: NodeListOf<HTMLSpanElement> = todos[id].querySelectorAll(".dateDisplay");
-    const btns: NodeListOf<HTMLButtonElement> = todos[id].querySelectorAll("button");
+    // eslint-disable-next-line array-callback-return
+    const idTodo: Array<Element> = Array.from(todos).filter((todo) => {
+      if (parseInt(todo.getAttribute("id")!.valueOf()) === id) {
+        return todo;
+      }
+    });
+    const textArea: NodeListOf<HTMLInputElement> = idTodo[0].querySelectorAll(".editForm");
+    const dateArea: NodeListOf<HTMLInputElement> = idTodo[0].querySelectorAll(".editDate");
+    const textDisplay: NodeListOf<HTMLSpanElement> = idTodo[0].querySelectorAll(".textDisplay");
+    const dateDisplay: NodeListOf<HTMLSpanElement> = idTodo[0].querySelectorAll(".dateDisplay");
+    const btns: NodeListOf<HTMLButtonElement> = idTodo[0].querySelectorAll("button");
 
     //button switch reset
     btns[2].parentElement!.classList.add("hidden");
@@ -109,11 +122,12 @@ const App = () => {
     textArea[0].setAttribute("disabled", "");
     dateArea[0].classList.add("hidden");
     dateArea[0].setAttribute("disabled", "");
+    console.log(textArea[0], dateArea[0]);
 
     const newContent = [textArea[0].value, dateArea[0].value];
     setTodoList((prevState: Array<Object>) => {
       // eslint-disable-next-line array-callback-return
-      const updatedState = prevState.map((item: { id?: number }, i: number) => {
+      const updatedState = prevState.map((item: { id?: number }) => {
         if (id === item.id) {
           return { ...item, textValue: newContent[0], dateValue: newContent[1] };
         }
@@ -126,8 +140,8 @@ const App = () => {
 
   function toggleTodo(id: number) {
     setTodoList((prevState: Array<Object>) => {
-      const updatedState = prevState.map((item: { completed?: boolean }, i: number) => {
-        if (i === id) {
+      const updatedState = prevState.map((item: { completed?: boolean; id?: number }) => {
+        if (id === item.id) {
           return { ...item, completed: !item.completed };
         }
         return item;
